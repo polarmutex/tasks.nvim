@@ -43,6 +43,8 @@
           (_final: _prev: {
             neovimPlugins = {
               inherit (self'.packages) plenary-nvim;
+              inherit (self'.packages) tasks-nvim;
+              inherit (self'.packages) telescope-nvim;
             };
           })
         ];
@@ -81,13 +83,26 @@
               inherit src;
               version = src.lastModifiedDate;
             };
+          telescope-nvim = let
+            src = inputs.telescope-nvim;
+          in
+            pkgs.pkgs.vimUtils.buildVimPluginFrom2Nix {
+              name = "telescope.nvim";
+              inherit src;
+              version = src.lastModifiedDate;
+            };
         in {
           default = config.packages.tasks-nvim;
+          docgen = pkgs.callPackage ./pkgs/docgen.nix {};
           inherit neovim-git;
           inherit plenary-nvim;
           inherit tasks-nvim;
-          docgen = pkgs.callPackage ./pkgs/docgen.nix {};
+          inherit telescope-nvim;
           typecheck = pkgs.callPackage ./pkgs/typecheck.nix {inherit (inputs) self;};
+          plenary-test = pkgs.callPackage ./pkgs/plenary-test.nix {
+            name = "tasks-nvim";
+            inherit (inputs) self;
+          };
         };
 
         devShells = {

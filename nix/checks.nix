@@ -24,7 +24,7 @@
       };
     in {
       inherit pre-commit-check;
-      inherit (pkgs) typecheck;
+      inherit (config.packages) typecheck;
     };
   };
 }
